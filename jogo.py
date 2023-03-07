@@ -45,36 +45,30 @@ if jogo.solvability:
         jogo.BFS() # retorna uma string com os movimentos que levaram ao estado final
         end = time.time_ns()
         elapsedTime = (end - start)/1000000000 # tempo decorrido em segundos  
-        solucao = jogo.solution
-        if jogo.solvability == False:
-            print('\n'+solucao)
-        else:
-            numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
-            printMoves(solucao)
-            printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumberOfNodesStored())
+        solucao = jogo.solution        
+        numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
+        printMoves(solucao)
+        printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumberOfNodesStored())
     elif tipo == 2:
         jogo = search.Search(estadoInicial, estadoFinal)
         start = time.time_ns()
-        jogo.pesquisaLarguraIterativa() # retorna uma string com os movimentos que levaram ao estado final
+        depth = jogo.pesquisaLarguraIterativa() # retorna uma string com os movimentos que levaram ao estado final
         end = time.time_ns()
-        elapsedTime = (end - start)/1000000000 # tempo decorrido em segundos
-        solucao = jogo.solution
-        if jogo.solvability == False: 
-            print('\n'+solucao)
-        else:
-            numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
-            printMoves(solucao)
-            printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumberOfNodesStored())
-    
+        elapsedTime = (end - start)/1000000000 # tempo decorrido em segundos  
+        solucao = jogo.solution        
+        numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
+        printMoves(solucao)
+        printInfo(numeroDePassos, elapsedTime, depth)
     elif tipo == 3:
         jogo = search.Search(estadoInicial, estadoFinal)
         heuristica = int(input("Insira o tipo de heuristica: "))
         start = time.time_ns()
-        jogo.greddy(estadoInicial,heuristica)
+        jogo.greddy(estadoInicial, heuristica) # retorna uma string com os movimentos que levaram ao estado final
         end = time.time_ns()
-        elapsedTime = (end - start)/1000000000
-        solucao = jogo.solution
-        print("\n" + solucao)
-
+        elapsedTime = (end - start)/1000000000 # tempo decorrido em segundos  
+        solucao = jogo.solution        
+        numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
+        printMoves(solucao)
+        printInfo(numeroDePassos, elapsedTime, '?')
 else:
     print("Nao ha solucao!")
