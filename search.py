@@ -1,5 +1,6 @@
 import node # node.py
 import queue
+import pdb
 
 class Search:
    estadoInicial = None # nó - ainda nao inicializado 
@@ -107,12 +108,33 @@ class Search:
             manhattan += collumnDifference + rowDifference
         return manhattan
    
+   def isCycle(self, node, antecessor):
+      pdb.set_trace()
+      if antecessor == None:
+         return False
+      if node.estado == antecessor.estado:
+         return True
+      return self.isCycle(node, antecessor.parent)
+      
    #pesquisa gulosa com heuristica 
    #o tipo diz qual a heuristica a ser usada
    def greddy(self, node, tipo):
+      pdb.set_trace()
       if(self.isSolution(node)):
          if self.solution == '': self.solution = node.moveSet
-         return True
-      criancas = node.expandeNode() 
-      nodeToExpand = criancas[0]
-      if(tipo == 1):                #tipo 1 -> peças fora do sitio
+         return
+      criancas = node.expandeNode()
+      nodeToExpand = None
+      if tipo == 1:
+         minimo = 16
+         for crianca in criancas:
+            if self.isCycle(crianca, node) == False and self.misplaced(crianca) < minimo:
+               minimo = self.misplaced(crianca)
+               nodeToExpand = crianca
+      elif tipo == 2:
+         minimo = 15*6  #distancia maxima de manhattan total
+         for crianca in criancas:
+            if self.isCycle(crianca, node) == False and self.getManhattanDistance(crianca) < minimo:
+               minimo = self.getManhattanDistance(crianca)
+               nodeToExpand = crianca
+      return self.greddy(nodeToExpand, tipo) 
