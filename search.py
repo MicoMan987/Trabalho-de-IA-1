@@ -82,7 +82,7 @@ class Search:
       return False
    
    #heuristicas
-   #total das peças fora do sitio
+   #somatório do número de peças fora do lugar
    def misplaced(self, node):
       foraDoSitio = 0
       for i in range(len(node.estado)):
@@ -90,7 +90,7 @@ class Search:
             foraDoSitio += 1
       return foraDoSitio
    
-   #total das distancias das peças
+   #somatório das distâncias de cada peça ao seu lugar na configuração final
    def getManhattanDistance(self, node):
         manhattan = 0
         for i in range(1,16):
@@ -126,4 +126,3 @@ class Search:
                   if self.getManhattanDistance(crianca) < minimo:
                      minimo = self.getManhattanDistance(crianca)
                      node = crianca
-      
