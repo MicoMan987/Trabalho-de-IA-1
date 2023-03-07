@@ -73,4 +73,4 @@ if jogo.solvability:
         print("Manhattan distance total: ", jogo.getManhattanDistance(jogo.estadoInicial))
 
 else:
-    print("Nao ha solfdasfsadfasdfasducao!")
+    print("Nao ha solucao!")
