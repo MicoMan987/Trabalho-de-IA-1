@@ -36,6 +36,7 @@ class Node:
         novoNo.moveSet = self.moveSet+move
         return novoNo
 
+
     # apenas imprime o estado do nó
     def __str__(self):
         lista = self.estado

@@ -68,9 +68,13 @@ if jogo.solvability:
     
     elif tipo == 3:
         jogo = search.Search(estadoInicial, estadoFinal)
+        heuristica = int(input("Insira o tipo de heuristica: "))
         start = time.time_ns()
-        print("Numero de pecas fora do sito: ", jogo.misplaced(jogo.estadoInicial))
-        print("Manhattan distance total: ", jogo.getManhattanDistance(jogo.estadoInicial))
+        jogo.greddy(estadoInicial,heuristica)
+        end = time.time_ns()
+        elapsedTime = (end - start)/1000000000
+        solucao = jogo.solution
+        print("\n" + solucao)
 
 else:
     print("Nao ha solucao!")
