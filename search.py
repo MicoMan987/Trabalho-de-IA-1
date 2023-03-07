@@ -8,6 +8,7 @@ class Search:
    maxNumberOfNodesStored = 0
    solvability = False
    solution = ''
+   visited = []
 
    def __init__(self, estadoInicial, estadoFinal):
       self.estadoInicial = estadoInicial
@@ -34,21 +35,18 @@ class Search:
        return totalInversoes
 
    def isSolution(self, node):
-        return str(node.estado) == str(self.estadoFinal.estado) # MUDEI
+        return str(node.estado) == str(self.estadoFinal.estado)
 
    def getMaxNumberOfNodesStored(self):
       return self.maxNumberOfNodesStored
 
    #pesquisa em largura
    def BFS(self):
-      #if self.solvability == False: 
-      #  self.solution = 'It is impossible to reach a solution'
-      #   return
       curNode = self.estadoInicial
       if(self.isSolution(curNode)): return curNode.moveSet
       q = queue.Queue()
       q.put(curNode) #adiciona o nó à fila
-      atingidas = [self.estadoInicial] #lista dos estados atingidos
+      self.visited.append(self.estadoInicial) #lista dos estados visitados
       while(q.qsize()!=0):
          curNode = q.get()
          newNodes = curNode.expandeNode()
@@ -56,16 +54,13 @@ class Search:
             if(self.isSolution(node)):
                self.solution = node.moveSet
                return
-            if(node.estado not in atingidas):
-               atingidas.append(node.estado)
+            if(node.estado not in self.visited):
+               self.visited.append(node.estado)
                q.put(node)
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
    #funcao de pesquisa em profundidade iterativa d -> limite da profundidade
    def pesquisaLarguraIterativa(self):
-      #if self.solvability == False: 
-      #   self.solution = 'It is impossible to reach a solution'
-      #   return
       nodeInicial = self.estadoInicial 
       d = 0
       result = self.dfs(nodeInicial,d)
@@ -81,8 +76,8 @@ class Search:
       if limite <= 0:
          return False
       criancas = node.expandeNode()
-      for i in range(len(criancas)):
-         if(self.dfs(criancas[i],limite-1)):
+      for crianca in criancas:
+         if(self.dfs(crianca,limite-1)):
             return True
       return False
    
@@ -107,34 +102,28 @@ class Search:
                 rowDifference *= -1
             manhattan += collumnDifference + rowDifference
         return manhattan
-   
-   def isCycle(self, node, antecessor):
-      pdb.set_trace()
-      if antecessor == None:
-         return False
-      if node.estado == antecessor.estado:
-         return True
-      return self.isCycle(node, antecessor.parent)
-      
-   #pesquisa gulosa com heuristica 
-   #o tipo diz qual a heuristica a ser usada
+
+
    def greddy(self, node, tipo):
-      pdb.set_trace()
-      if(self.isSolution(node)):
-         if self.solution == '': self.solution = node.moveSet
-         return
-      criancas = node.expandeNode()
-      nodeToExpand = None
-      if tipo == 1:
-         minimo = 16
-         for crianca in criancas:
-            if self.isCycle(crianca, node) == False and self.misplaced(crianca) < minimo:
-               minimo = self.misplaced(crianca)
-               nodeToExpand = crianca
-      elif tipo == 2:
-         minimo = 15*6  #distancia maxima de manhattan total
-         for crianca in criancas:
-            if self.isCycle(crianca, node) == False and self.getManhattanDistance(crianca) < minimo:
-               minimo = self.getManhattanDistance(crianca)
-               nodeToExpand = crianca
-      return self.greddy(nodeToExpand, tipo) 
+      while True:
+         if(self.isSolution(node)):
+            if self.solution == '': self.solution = node.moveSet
+            return
+         criancas = node.expandeNode()
+         if tipo == 1:
+            minimo = 16
+            for crianca in criancas:
+               if crianca not in self.visited:
+                  self.visited.append(crianca)
+                  if self.misplaced(crianca) < minimo:
+                     minimo = self.misplaced(crianca)
+                     node = crianca
+         elif tipo == 2:
+            minimo = 15*6  #distancia maxima de manhattan total
+            for crianca in criancas:
+               if crianca not in self.visited:
+                  self.visited.append(crianca)
+                  if self.getManhattanDistance(crianca) < minimo:
+                     minimo = self.getManhattanDistance(crianca)
+                     node = crianca
+      
