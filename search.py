@@ -8,6 +8,7 @@ class Search:
    maxNumberOfNodesStored = 0
    solvability = False
    solution = ''
+   visited = []
 
    def __init__(self, estadoInicial, estadoFinal):
       self.estadoInicial = estadoInicial
@@ -34,21 +35,18 @@ class Search:
        return totalInversoes
 
    def isSolution(self, node):
-        return str(node.estado) == str(self.estadoFinal.estado) # MUDEI
+        return str(node.estado) == str(self.estadoFinal.estado)
 
    def getMaxNumberOfNodesStored(self):
       return self.maxNumberOfNodesStored
 
    #pesquisa em largura
    def BFS(self):
-      #if self.solvability == False: 
-      #  self.solution = 'It is impossible to reach a solution'
-      #   return
       curNode = self.estadoInicial
       if(self.isSolution(curNode)): return curNode.moveSet
       q = queue.Queue()
       q.put(curNode) #adiciona o nó à fila
-      atingidas = [self.estadoInicial] #lista dos estados atingidos
+      self.visited.append(self.estadoInicial) #lista dos estados visitados
       while(q.qsize()!=0):
          curNode = q.get()
          newNodes = curNode.expandeNode()
@@ -56,16 +54,13 @@ class Search:
             if(self.isSolution(node)):
                self.solution = node.moveSet
                return
-            if(node.estado not in atingidas):
-               atingidas.append(node.estado)
+            if(node.estado not in self.visited):
+               self.visited.append(node.estado)
                q.put(node)
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
    #funcao de pesquisa em profundidade iterativa d -> limite da profundidade
    def pesquisaLarguraIterativa(self):
-      #if self.solvability == False: 
-      #   self.solution = 'It is impossible to reach a solution'
-      #   return
       nodeInicial = self.estadoInicial 
       d = 0
       result = self.dfs(nodeInicial,d)
@@ -81,13 +76,13 @@ class Search:
       if limite <= 0:
          return False
       criancas = node.expandeNode()
-      for i in range(len(criancas)):
-         if(self.dfs(criancas[i],limite-1)):
+      for crianca in criancas:
+         if(self.dfs(crianca,limite-1)):
             return True
       return False
    
    #heuristicas
-   #total das peças fora do sitio
+   #somatório do número de peças fora do lugar
    def misplaced(self, node):
       foraDoSitio = 0
       for i in range(len(node.estado)):
@@ -95,7 +90,7 @@ class Search:
             foraDoSitio += 1
       return foraDoSitio
    
-   #total das distancias das peças
+   #somatório das distâncias de cada peça ao seu lugar na configuração final
    def getManhattanDistance(self, node):
         manhattan = 0
         for i in range(1,16):
