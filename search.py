@@ -1,14 +1,14 @@
 import node # node.py
 import queue
-#import pdb
 
+      
 class Search:
-   estadoInicial = None # nó - ainda nao inicializado 
-   estadoFinal = None   # nó - ainda nao inicializado
+   estadoInicial = None # nó inicial- ainda nao inicializado 
+   estadoFinal = None   # nó final - ainda nao inicializado
    maxNumberOfNodesStored = 0
    solvability = False
    solution = ''
-   visited = []
+   visited = [] #lista dos estados/nós visitados
 
    def __init__(self, estadoInicial, estadoFinal):
       self.estadoInicial = estadoInicial
@@ -43,35 +43,38 @@ class Search:
    #pesquisa em largura
    def BFS(self):
       curNode = self.estadoInicial
-      if(self.isSolution(curNode)): return curNode.moveSet
+      if(self.isSolution(curNode)): 
+         self.solution = curNode.moveSet
+         return
       q = queue.Queue()
       q.put(curNode) #adiciona o nó à fila
-      self.visited.append(self.estadoInicial) #lista dos estados visitados
-      while(q.qsize()!=0):
+      self.visited.append(curNode)
+      while(not q.empty()):
          curNode = q.get()
          newNodes = curNode.expandeNode()
          for node in newNodes:
             if(self.isSolution(node)):
                self.solution = node.moveSet
                return
-            if(node.estado not in self.visited):
-               self.visited.append(node.estado)
+            if(node not in self.visited):
+               self.visited.append(node)
                q.put(node)
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
+
    #funcao de pesquisa em profundidade iterativa d -> limite da profundidade
-   def pesquisaLarguraIterativa(self):
-      nodeInicial = self.estadoInicial 
+   def iterativaEmProfundidade(self):
+      node = self.estadoInicial 
       d = 0
-      result = self.dfs(nodeInicial,d)
+      result = self.dfs(node, d)
       while(not result):
         d += 1
-        result = self.dfs(nodeInicial,d)
-      return d
+        result = self.dfs(node, d)
+      self.maxNumberOfNodesStored = d
 
    def dfs(self, node, limite):
       if(self.isSolution(node)):
-         if self.solution == '': self.solution = node.moveSet
+         self.solution = node.moveSet
          return True
       if limite <= 0:
          return False
@@ -81,6 +84,7 @@ class Search:
             return True
       return False
    
+
    #heuristicas
    #somatório do número de peças fora do lugar
    def misplaced(self, node):
@@ -94,47 +98,64 @@ class Search:
    def getManhattanDistance(self, node):
         manhattan = 0
         for i in range(1,16):
-            collumnDifference = node.estado.index(i)%4-self.estadoFinal.estado.index(i)%4
-            if collumnDifference < 0:
-                collumnDifference *= -1
-            rowDifference = int(node.estado.index(i)/4) - int(self.estadoFinal.estado.index(i)/4)
-            if(rowDifference<0):
-                rowDifference *= -1
+            collumnDifference = abs(node.estado.index(i)%4 - self.estadoFinal.estado.index(i)%4) # abs() -> valor absoluto
+            rowDifference = abs(node.estado.index(i)//4 - self.estadoFinal.estado.index(i)//4)
             manhattan += collumnDifference + rowDifference
         return manhattan
+
+   def greedy(self, heuristica):
+      node = self.estadoInicial
+      while self.solution == '':
+         if(self.isSolution(node)):
+            self.solution = node.moveSet
+            return
+         self.visited.append(node)
+         criancas = node.expandeNode()
+         if heuristica == 1:  
+            minimo = 16 # max misplaced tiles+1
+            for crianca in criancas:  # vai percorrer a lista e pegar o melhor
+               if crianca not in self.visited and self.misplaced(crianca) < minimo: 
+                     minimo = self.misplaced(crianca)
+                     node = crianca # proximo nó a ser expandido
+         elif heuristica == 2:
+            minimo = 15*6  #soma das distancias maxima de manhattan possivel
+            for crianca in criancas: 
+               if crianca not in self.visited and self.getManhattanDistance(crianca) < minimo:
+                     minimo = self.getManhattanDistance(crianca)
+                     node = crianca # proximo nó a ser expandido
    
-   def isCycle(self, node, antecessor):
-      #pdb.set_trace()
-      if antecessor == None:
-         return False
-      if node.estado == antecessor.estado:
-         return True
-      return self.isCycle(node, antecessor.parent)
-      
-   #pesquisa gulosa com heuristica 
-   #o tipo diz qual a heuristica a ser usada
-   def greddy(self, node, tipo):
-      #pdb.set_trace()
-      if(self.isSolution(node)):
-         if self.solution == '': self.solution = node.moveSet
-         return
-      criancas = node.expandeNode()
-      nodeToExpand = None
-      if tipo == 1:
-         minimo = 16
-         for crianca in criancas:
-            if self.isCycle(crianca, node) == False and self.misplaced(crianca) < minimo:
-               minimo = self.misplaced(crianca)
-               nodeToExpand = crianca
-               print()
-               print(minimo)
-      elif tipo == 2:
-         minimo = 15*6  #distancia maxima de manhattan total
-         for crianca in criancas:
-            if self.isCycle(crianca, node) == False and self.getManhattanDistance(crianca) < minimo:
-               minimo = self.getManhattanDistance(crianca)
-               nodeToExpand = crianca
-      print()
-      print(nodeToExpand)
-      print()
-      return self.greddy(nodeToExpand, tipo) 
+
+   # função de avaliação -> f(n) = g(n) + h(n)
+   def f(self, node, heuristica):
+      g = len(node.moveSet) # custo do caminho já percorrido (saida do estado inicial até o estado atual)
+      h = self.misplaced(node) if heuristica==1 else self.getManhattanDistance(node) # custo estimado para chegar ao estado final
+      return g+h
+
+   def A_star(self, heuristica):
+      curNode = self.estadoInicial
+      q = queue.PriorityQueue()
+      pair = Pair(curNode, self.f(curNode, heuristica))
+      q.put(pair) #adiciona o par (nó, custo) à fila; custo = f(curNode) 
+      self.visited.append(curNode)
+      while(not q.empty()):
+         head = q.get()  # pega o "best", pois no topo da fila fica a com o menor custo
+         curNode = head.node # head = (node, cost)
+         if(self.isSolution(curNode)):
+            self.solution = curNode.moveSet
+            return
+         newNodes = curNode.expandeNode()
+         for node in newNodes:
+            if(node not in self.visited):
+               self.visited.append(node)
+               pair = Pair(node, self.f(node, heuristica))
+               q.put(pair)
+            if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
+
+class Pair:
+   def __init__(self, node, cost):
+      self.node = node
+      self.cost = cost
+
+   def __lt__(self, other):
+      return self.cost < other.cost
+
