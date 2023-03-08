@@ -2,7 +2,6 @@ class Node:
     def __init__(self, estado, parent):
         self.estado = estado # estado do jogo
         self.parent = parent # pai do nó
-        self.move = ''       # movimento pode ser 'U' ou 'D' ou 'L' ou 'R'
         self.moveSet = ''   # lista com os movimentos que levaram o jogo do estado inicial a este atual estado
         self.blankPos = estado.index(0)
 
@@ -32,10 +31,8 @@ class Node:
         estadoNovo[position] = estadoNovo[self.blankPos]
         estadoNovo[self.blankPos] = temp
         novoNo = Node(estadoNovo, self)
-        novoNo.move = move
         novoNo.moveSet = self.moveSet+move
         return novoNo
-
 
     # apenas imprime o estado do nó
     def __str__(self):
