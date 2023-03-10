@@ -75,7 +75,7 @@ if jogo.solvability:
         printInfo(numeroDePassos, elapsedTime, '?')
     elif tipo == 4:
         jogo = search.Search(estadoInicial, estadoFinal)
-        heuristica = int(input("Insira o tipo de heuristica: "))        
+        heuristica = int(input("Insira o tipo de heuristica: "))
         start = time.time_ns()
         jogo.A_star(heuristica) # inicia a pesquisa
         end = time.time_ns()
@@ -84,5 +84,16 @@ if jogo.solvability:
         numeroDePassos = len(solucao) # n° de passos/movimentos até o estado final
         printMoves(solucao)
         printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumberOfNodesStored())
+    elif tipo == 5:
+        jogo = search.Search(estadoInicial, estadoFinal)
+        start = time.time_ns()
+        jogo.dfs()
+        end.time_ns()
+        elapsedTime = (end-start)/1000000000
+        solucao = jogo.solution
+        numeroDePacos = len(solucao)
+        printmoves(solucao)
+        printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumverOfNodesStored())
+
 else:
     print("Nao ha solucao!")

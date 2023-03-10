@@ -1,14 +1,14 @@
 import node # node.py
 import queue
 
-      
 class Search:
    estadoInicial = None # nó inicial- ainda nao inicializado 
    estadoFinal = None   # nó final - ainda nao inicializado
    maxNumberOfNodesStored = 0
    solvability = False
    solution = ''
-   visited = [] #lista dos estados/nós visitados
+   visited = dict() # permite adicionar, remover e verificar se contém item em O(1)
+                    # o dict terá como chave uma representação em string do nó < str(node) > e valor uma string vazia (não nos interessa o valor)
 
    def __init__(self, estadoInicial, estadoFinal):
       self.estadoInicial = estadoInicial
@@ -43,12 +43,12 @@ class Search:
    #pesquisa em largura
    def BFS(self):
       curNode = self.estadoInicial
-      if(self.isSolution(curNode)): 
+      if(self.isSolution(curNode)):
          self.solution = curNode.moveSet
          return
       q = queue.Queue()
       q.put(curNode) #adiciona o nó à fila
-      self.visited.append(curNode)
+      self.visited[str(curNode)] = '' #adiciona o par ( str(curNode): '' ) ao dicionario
       while(not q.empty()):
          curNode = q.get()
          newNodes = curNode.expandeNode()
@@ -56,23 +56,23 @@ class Search:
             if(self.isSolution(node)):
                self.solution = node.moveSet
                return
-            if(node not in self.visited):
-               self.visited.append(node)
+            if(str(node) not in self.visited):
+               self.visited[str(node)] = ''
                q.put(node)
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
 
    #funcao de pesquisa em profundidade iterativa d -> limite da profundidade
    def iterativaEmProfundidade(self):
-      node = self.estadoInicial 
+      node = self.estadoInicial
       d = 0
-      result = self.dfs(node, d)
+      result = self.idfs(node, d)
       while(not result):
         d += 1
-        result = self.dfs(node, d)
+        result = self.idfs(node, d)
       self.maxNumberOfNodesStored = d
 
-   def dfs(self, node, limite):
+   def idfs(self, node, limite):
       if(self.isSolution(node)):
          self.solution = node.moveSet
          return True
@@ -83,7 +83,6 @@ class Search:
          if(self.dfs(crianca,limite-1)):
             return True
       return False
-   
 
    #heuristicas
    #somatório do número de peças fora do lugar
@@ -93,7 +92,7 @@ class Search:
          if node.estado[i] != self.estadoFinal.estado[i] and node.estado[i] != 0:
             foraDoSitio += 1
       return foraDoSitio
-   
+
    #somatório das distâncias de cada peça ao seu lugar na configuração final
    def getManhattanDistance(self, node):
         manhattan = 0
@@ -109,21 +108,20 @@ class Search:
          if(self.isSolution(node)):
             self.solution = node.moveSet
             return
-         self.visited.append(node)
+         self.visited[str(node)] = ''
          criancas = node.expandeNode()
-         if heuristica == 1:  
+         if heuristica == 1:
             minimo = 16 # max misplaced tiles+1
             for crianca in criancas:  # vai percorrer a lista e pegar o melhor
-               if crianca not in self.visited and self.misplaced(crianca) < minimo: 
+               if str(crianca) not in self.visited and self.misplaced(crianca) < minimo: 
                      minimo = self.misplaced(crianca)
                      node = crianca # proximo nó a ser expandido
          elif heuristica == 2:
             minimo = 15*6  #soma das distancias maxima de manhattan possivel
-            for crianca in criancas: 
-               if crianca not in self.visited and self.getManhattanDistance(crianca) < minimo:
+            for crianca in criancas:
+               if str(crianca) not in self.visited and self.getManhattanDistance(crianca) < minimo:
                      minimo = self.getManhattanDistance(crianca)
                      node = crianca # proximo nó a ser expandido
-   
 
    # função de avaliação -> f(n) = g(n) + h(n)
    def f(self, node, heuristica):
@@ -136,7 +134,7 @@ class Search:
       q = queue.PriorityQueue()
       pair = Pair(curNode, self.f(curNode, heuristica))
       q.put(pair) #adiciona o par (nó, custo) à fila; custo = f(curNode) 
-      self.visited.append(curNode)
+      self.visited[str(curNode)] = ''
       while(not q.empty()):
          head = q.get()  # pega o "best", pois no topo da fila fica a com o menor custo
          curNode = head.node # head = (node, cost)
@@ -145,11 +143,31 @@ class Search:
             return
          newNodes = curNode.expandeNode()
          for node in newNodes:
-            if(node not in self.visited):
-               self.visited.append(node)
+            if(str(node) not in self.visited):
+               self.visited[str(node)] = ''  # adiciona o par ( str(node): '' ) ao dicionario
                pair = Pair(node, self.f(node, heuristica))
                q.put(pair)
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
+
+   def dfs(self):
+      curNode = self.estadoInicial
+      stack = []
+      stack.append(curNode)
+      self.visited[str(curNode)] = '' #adiciona o par ( str(curNode): '' ) ao dicionario
+      if self.isSolution(curNode):
+         self.solution = self.moveSet
+         return
+      while(not stack.empty()):
+         curNode=stack.pop()
+         criancas = curNode.expandeNode()
+         for crianca in criancas:
+            if self.isSolution(crianca):
+               self.solution = crianca.moveset
+               return
+            elif str(crianca) not in self.visited:
+               self.visited[str(node)] = ''
+               stack.append(node)
+            if len(stack) > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
 class Pair:
    def __init__(self, node, cost):
