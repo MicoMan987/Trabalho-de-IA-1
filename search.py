@@ -1,5 +1,6 @@
 import node # node.py
 import queue
+import pdb
 
 class Search:
    estadoInicial = None # nó inicial- ainda nao inicializado 
@@ -150,6 +151,7 @@ class Search:
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
    def dfs(self):
+      pdb.set_trace()
       curNode = self.estadoInicial
       stack = []
       stack.append(curNode)
@@ -157,17 +159,17 @@ class Search:
       if self.isSolution(curNode):
          self.solution = self.moveSet
          return
-      while(not stack.empty()):
+      while(not stack == []):
          curNode=stack.pop()
          criancas = curNode.expandeNode()
          for crianca in criancas:
             if self.isSolution(crianca):
-               self.solution = crianca.moveset
+               self.solution = crianca.moveSet
                return
             elif str(crianca) not in self.visited:
-               self.visited[str(node)] = ''
-               stack.append(node)
-            if len(stack) > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
+               self.visited[str(crianca)] = ''
+               stack.append(crianca)
+            if len(stack) > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = len(stack)
 
 class Pair:
    def __init__(self, node, cost):

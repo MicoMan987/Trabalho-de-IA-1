@@ -88,7 +88,7 @@ if jogo.solvability:
         jogo = search.Search(estadoInicial, estadoFinal)
         start = time.time_ns()
         jogo.dfs()
-        end.time_ns()
+        end = time_ns()
         elapsedTime = (end-start)/1000000000
         solucao = jogo.solution
         numeroDePacos = len(solucao)
