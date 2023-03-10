@@ -1,6 +1,5 @@
 import node # node.py
 import queue
-import pdb
 
 class Search:
    estadoInicial = None # nó inicial- ainda nao inicializado 
@@ -151,7 +150,6 @@ class Search:
             if q.qsize() > self.maxNumberOfNodesStored: self.maxNumberOfNodesStored = q.qsize()
 
    def dfs(self):
-      pdb.set_trace()
       curNode = self.estadoInicial
       stack = []
       stack.append(curNode)
