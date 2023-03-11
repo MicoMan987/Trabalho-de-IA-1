@@ -88,12 +88,12 @@ if jogo.solvability:
         jogo = search.Search(estadoInicial, estadoFinal)
         start = time.time_ns()
         jogo.dfs()
-        end = time_ns()
+        end = time.time_ns()
         elapsedTime = (end-start)/1000000000
         solucao = jogo.solution
-        numeroDePacos = len(solucao)
-        printmoves(solucao)
-        printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumverOfNodesStored())
+        numeroDePassos = len(solucao)
+        printMoves(solucao)
+        printInfo(numeroDePassos, elapsedTime, jogo.getMaxNumberOfNodesStored())
 
 else:
     print("Nao ha solucao!")
