@@ -80,7 +80,7 @@ class Search:
          return False
       criancas = node.expandeNode()
       for crianca in criancas:
-         if(self.dfs(crianca,limite-1)):
+         if(self.idfs(crianca,limite-1)):
             return True
       return False
 
