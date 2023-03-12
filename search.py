@@ -107,6 +107,7 @@ class Search:
          return True
       if limite <= 0:
          return False
+
       newNodes = node.expandeNode()
       for node in newNodes:
          if(self.idfs(node,limite-1)):
