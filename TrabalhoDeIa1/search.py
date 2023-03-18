@@ -9,7 +9,6 @@ class Pair:
    def __lt__(self, other):
       return self.cost < other.cost
 
-      
 class Search:
    estadoInicial = None # nó inicial- ainda nao inicializado 
    estadoFinal = None   # nó final - ainda nao inicializado
@@ -71,6 +70,7 @@ class Search:
                q.put(node)
 
    #pesquisa em profundidade
+   #BUG: tem problemas de memória
    def DFS(self):
       curNode = self.estadoInicial
       stack = queue.LifoQueue()
@@ -113,7 +113,6 @@ class Search:
          if(self.idfs(node,limite-1)):
             return True
       return False
-   
 
    #heuristicas
    #somatório do número de peças fora do lugar
@@ -123,7 +122,7 @@ class Search:
          if node.estado[i] != self.estadoFinal.estado[i] and node.estado[i] != 0:
             foraDoSitio += 1
       return foraDoSitio
-   
+
    #somatório das distâncias de cada peça ao seu lugar na configuração final
    def getManhattanDistance(self, node):
         manhattan = 0
