@@ -2,54 +2,44 @@
 import java.util.Scanner;
 
 public class Game {
-	final static char YELLOW = 'X';
-	final static char RED = 'O';
 	static Scanner stdin = new Scanner(System.in);
 	static Board board;
-	static int algorithm; // um número escolhido pelo usário; representa um dos 3 algoritmos
+	static int strategy; // um número escolhido pelo usário; representa um dos 3 algoritmos
 
 	public static void sayWhoIsTheWinner() {
-		if (board.thereIsAWinner()) System.out.println("------ THE WINNER IS PLAYER '" + board.getWinner() + "'! ------");
+		if (board.thereIsAWinner()) {
+			if (board.getWinner() == Board.YELLOW)
+				System.out.println("------ THE WINNER IS PLAYER '" + board.getWinner() + "', YOU LOSE! ------");
+			else
+				System.out.println("------ THE WINNER IS PLAYER '" + board.getWinner() + "', YOU WIN! ------");
+		}
 		else System.out.println("------ THE GAME ENDED IN A DRAW! ------");
 	}
 
-	public static void chooseAlgorithm() {
-		System.out.println("Choose an algorithm: 1 - MINIMAX, 2 - ALPHA-BETA, 3 - MCTS");
+	public static void chooseStrategy() {
+		System.out.println("Choose a strategy: 1 - MINIMAX, 2 - ALPHA-BETA, 3 - MCTS");
 		System.out.print("Insert a number:");
-		algorithm = stdin.nextInt();
+		strategy = stdin.nextInt();
 	}
 
 	public static void main(String[] args) {
 		board = new Board();
-		// chooseAlgorithm();
-
+		chooseStrategy();
 		// aqui acontecerá toda a interação entre a máquina e a pessoa que está jogando
-		int[] slot = new int[2];
+		board.printBoard();
 		while (!board.isFull() && !board.thereIsAWinner()) {
+			int column = board.computerTurn(strategy, Board.YELLOW);
+			System.out.printf("\nComputer move: %d\n\n", column);
+			board.check();
+			if (board.thereIsAWinner()) break; // se houve um vencedor sai do ciclo
 			board.printBoard();
-			System.out.println("\n0123456");
-			System.out.println("'O' turn\n");
-			slot = board.put(stdin.nextInt(), RED);
-			board.verify(slot);
-			if (board.thereIsAWinner()) break; // se o RED venceu sai do ciclo
-			board.printBoard();
-			System.out.println("\n0123456");
-			System.out.println("'X' turn\n");
-			slot = board.put(stdin.nextInt(), YELLOW);
-			board.verify(slot);
+			System.out.println("0123456");
+			System.out.println("\nYour turn, choose a column number");
+			while(!board.put(stdin.nextInt(), Board.RED))
+				System.out.println("This column is full, choose another one.");
+			board.check();
 		}
 		board.printBoard();
 		sayWhoIsTheWinner();
 	}
 }
-
-// while (!board.isFull() && !board.thereIsAWinner()) {
-// 	board.printBoard();
-// 	System.out.println("0123456");
-// 	System.out.println("Your turn");
-// 	slot = board.put(stdin.nextInt(), RED);
-// 	board.verify(slot);
-// 	if (board.thereIsAWinner()) break; // se o humano venceu sai do ciclo
-// 	slot = board.computerTurn(algorithm, YELLOW);
-// 	board.verify(slot);
-// }
