@@ -15,7 +15,7 @@ public class Board {
    final static char RED = 'O';
    private boolean thereIsAWinner = false;
    private char winner;
-   char[][] board;
+   private char[][] board;
 
    Board() {
       board = new char[6][7];
@@ -25,9 +25,11 @@ public class Board {
    Board(Board b) {
       board = new char[6][7];
       for(int i = 0; i < board.length; i++) // copiar o tabuleiro
-         this.board[i] = Arrays.copyOf(b.board[i], board[0].length);
+         this.board[i] = Arrays.copyOf(b.getBoard()[i], board[0].length);
    }
    
+   char[][] getBoard() {return board;}
+
    // coloca uma peça numa coluna; devolve o true se teve êxito, false caso contrario
    boolean put(int colNumber, char token) {
       for (int i = board.length-1; i >= 0; i--)
@@ -49,6 +51,8 @@ public class Board {
 
    char getWinner() {return winner;}
 
+   boolean isColumnFull(int colNumber) {return board[0][colNumber] != EMPTY;}
+
    Map<Board, Integer> successors(char token) {
       Map<Board, Integer> boards = new HashMap<>(7); // 7 = capacidade inicial
       for (int colNumber = 0; colNumber<board[0].length; colNumber++) {
@@ -60,12 +64,19 @@ public class Board {
    }
    // escolhe a melhor jogada usando um dos 3 algoritmos e faz essa jogada 
    int computerTurn(int algorithm, char token) {
-      int colNumber = -1;
+      int colNumber;
       if (algorithm == 1) {
          colNumber = Strategies.minimax(5, this);
-         put(colNumber, token); // retornar as coordenadas do slot
+         put(colNumber, token);
       }
-      //else if ...
+      else if (algorithm == 2) {
+         colNumber = Strategies.alpha_beta(5, this);
+         put(colNumber, token);       
+      }
+      else {
+         colNumber = Strategies.mcts(this);
+         put(colNumber, token);
+      }
       return colNumber;
    }
 
@@ -124,7 +135,16 @@ public class Board {
    public void printBoard() {
       for (int i=0; i < board.length; i++) {
          String str = String.valueOf(board[i]);
-         System.out.println(str);
+         System.out.println(str.replace("", " ").trim());
       }
    }
+
+   // comparar dois boards, verificando apenas se tem o mesmo tabuleiro
+   public boolean equals(Board b) {
+      if (b==null) return false;
+      for(int i = 0; i < this.board.length; i++)
+         for (int j = 0; j<board[0].length; j++)
+            if (!(this.board[i][j]==b.getBoard()[i][j])) return false;
+      return true;
+   } 
 }
