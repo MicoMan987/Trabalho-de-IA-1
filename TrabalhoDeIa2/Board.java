@@ -66,14 +66,17 @@ public class Board {
    int computerTurn(int algorithm, char token) {
       int colNumber;
       if (algorithm == 1) {
+         //guarda semore 7^6 -1 nós
          colNumber = Strategies.minimax(5, this);
          put(colNumber, token);
       }
       else if (algorithm == 2) {
+         //guarda no máximo 7^6 nós ao mesmo tempo
          colNumber = Strategies.alpha_beta(5, this);
          put(colNumber, token);       
       }
       else {
+         //guarda 
          colNumber = Strategies.mcts(this);
          put(colNumber, token);
       }

@@ -5,11 +5,7 @@ public class Game {
 	static Board board;
 	static int strategy; // um número escolhido pelo usário; representa um dos 3 algoritmos
 	static boolean userIstheFirst;
-	static float average = 0;
-	static float total = 0;
-	static float count = 0;
 	public static void sayWhoIsTheWinner() {
-		average = total / count;
 		if (board.thereIsAWinner()) {
 			if (board.getWinner() == Board.YELLOW)
 				System.out.println("\n------ THE WINNER IS PLAYER '" + board.getWinner() + "', YOU LOSE! ------");
@@ -17,7 +13,6 @@ public class Game {
 				System.out.println("\n------ THE WINNER IS PLAYER '" + board.getWinner() + "', YOU WIN! ------");
 		}
 		else System.out.println("\n------ THE GAME ENDED IN A DRAW! ------");
-		System.out.println("Média: " + average);
 	}
 
 	public static void chooseStrategy() {
@@ -67,13 +62,7 @@ public class Game {
 			// aqui acontecerá toda a interação entre a máquina e a pessoa que está jogando
 			while (!gameIsOver(board)) {
 				if (!userIstheFirst) {
-					long start = System.nanoTime();
 					computerTurn();
-					long end = System.nanoTime();
-					System.out.println((float)(end - start)/1000000 + "ms");
-					count ++;
-					System.out.println("Jogada nº: " + count);
-					total += (float)(end - start)/1000000;
 					if (board.thereIsAWinner()) break; // se houve um vencedor sai do ciclo
 					userTurn();
 				}
@@ -82,13 +71,7 @@ public class Game {
 					if (board.thereIsAWinner()) break; // se houve um vencedor sai do ciclo
 
 					//medir o tempo de execução do turno do computador
-					long start = System.nanoTime();
 					computerTurn();
-					long end = System.nanoTime();
-					System.out.println((float)(end - start)/1000000 + "ms");
-					count ++;
-					System.out.println("Jogada nº: " + count);
-					total += (float)(end - start)/1000000;
 				}
 			}
 			sayWhoIsTheWinner();
