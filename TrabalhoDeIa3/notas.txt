@@ -1,0 +1,56 @@
+Notas do livro de inteligência artificial:
+
+
+Esperar no restaurante
+Objetivo: Decidir se deve esperar ou não por uma mesa no restaurante.
+Output y: Valor booleano que vai dizer se espera ou não.
+Input x: Vetor com 10 atributos cada um com um valor discreto.
+        - Alternate: Se há um restaurante que seja uma boa alternativa perto
+        - Bar: Se o restaurante tem uma área de bar para se poder eseprar
+        - Fri/Sat: Se isto é possível às sextas e sábados
+        - Hungry: Se tiver fome
+        - Patrons: Quantas pessoas estão no restaurante (Nenhuma, Algumas ou 
+        Cheio).
+        - Preço: altera entre $, $$, $$$
+        - Raining: Se estiver a chover lá fora
+        - Reservation: Se temos reseva
+        - Type: que tipo de restaurante (hamburgueres, italiano, francês ou
+        tailandês)
+        - WaitEstimate: Tempo de espera estimado. (10-0, 10-30, 30-60 ou >60
+        minutos).
+
+Neste caso vamos usar 12 exemplos que estão numa tabela no livro para treinar
+o modelo.
+
+Treinar árvores de decisão com exemplos:
+
+Nós queremos ter a árvore de decisão mais pequena possível, que é impossível
+encontrar de forma consistente. Nós podemos usar heurísticas simples para
+encontrarmos uma que seja próxima à mais pequena. O algoritmo mencionado no
+livro (LEARN-DECISION-TREE) usa uma estratégia greedy, dividir para conquistar,
+onde primeiro testa o atributo mais importante primeiro e depois resolve os
+outros problemas mais pequenos. O atributo mais importante é um atributo que 
+nos permite chegar às soluções corretas com o menor número de testes.
+
+Neste tipo de problemas recursivos temos quatro casos que temos que 
+considerar:
+
+        - Se o resultdo for positivo ou negativo (Sim ou Não) então não é
+        preciso mais nada.
+
+        - Se houver alguns resultados positivos e alguns resultados 
+        negativos, então escolhemos o melhor atributo para os dividir.
+
+        - Se não há mais exemplos, quer dizer que não houve nenhum exemplo
+        observado para aquela combinação de circunstâncias específica. 
+        Retornamos então o valor de output mais cmum para o conjunto de 
+        valores para o conjunto de exemplos usados para a construção do nó
+        pai.
+
+        - Se não houverem mais atributos, tanto positivos como negativos, 
+        quer dizer que os exemplos têm exatamente a mesma descrição, mas
+        classificações diferentes. Isto pode acontecer devido a um erro 
+        ou "barulho" (disturbios) nos dados. Porque o domínio é não
+        determinístico ou porque não existe um atributo que distingue os
+        exemplos. O que podemos fazer é retornar o valor mais comum dos
+        outros exemplos.
