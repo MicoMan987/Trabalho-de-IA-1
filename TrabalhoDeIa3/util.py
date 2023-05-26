@@ -27,8 +27,8 @@ def readInput():
 def read_input():
 	examples = list()
 	attributes = dict()
-	positive_examples = 0
-	negative_examples = 0
+	output_values_frequency = dict()
+	probability_list = list()
 
 	filename = input('Enter the name of a file with a dataset (training examples): ')
 
@@ -49,15 +49,22 @@ def read_input():
 			for k in range(len(values)):
 				example[attribs[k]] = values[k]
 				attributes[attribs[k]].add(values[k])
-				if k == len(values)-1:
-					if values[k].lower() == 'yes': positive_examples+=1
-					else: negative_examples+=1
+				if attribs[k] == classification:
+					try: output_values_frequency[values[k]] += 1
+					except: output_values_frequency[values[k]] = 1
 			examples.append(example)
 			values = file.readline().strip()
 			if not values: thereIsInput = False
-			else: values = values.split(',')
+			else: values = values.split(',')	
 		del attributes[classification]
-	return (examples, attributes, positive_examples, negative_examples)
+
+	total_examples_in_dataset = len(examples)
+
+	for output_value in output_values_frequency:
+		frequency = output_values_frequency[output_value]
+		probability_list.append(frequency/total_examples_in_dataset)
+		
+	return (examples, attributes, total_examples_in_dataset, probability_list)
 
 
 # Função para discretizar os valores de uma variável(atributo)
@@ -88,19 +95,3 @@ def define_intervals(examples, attribute):
 		end = round(min_value + (i + 1) * step, 3) # arredondar os valores longos para somente três casas decimais
 		intervals.append((start, end))
 	return intervals
-
-
-# ------------------------------------------------
-# OUT = readInput()
-# examples = OUT[0]
-# attributes = OUT[1]
-
-# for attr in attributes:
-# 	string = attr+': '+str(attributes[attr])
-# 	print(string)
-
-# for example in examples:
-# 	string = ''
-# 	for attr in example:
-# 		 string += attr+': '+example[attr]+';  '
-# 	print(string)
