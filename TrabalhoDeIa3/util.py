@@ -55,7 +55,7 @@ def read_input():
 			examples.append(example)
 			values = file.readline().strip()
 			if not values: thereIsInput = False
-			else: values = values.split(',')	
+			else: values = values.split(',')
 		del attributes[classification]
 
 	total_examples_in_dataset = len(examples)
@@ -63,7 +63,9 @@ def read_input():
 	for output_value in output_values_frequency:
 		frequency = output_values_frequency[output_value]
 		probability_list.append(frequency/total_examples_in_dataset)
-		
+	print(probability_list)
+	#examples - list()
+	#attributes - dict()
 	return (examples, attributes, total_examples_in_dataset, probability_list)
 
 
@@ -88,7 +90,6 @@ def define_intervals(examples, attribute):
 	# step é a diferença entre os valores inicial e final de um intervalo. Ela representa o tamanho de cada intervalo, cada intervalo terá um tamanho igual a step.
 	# é calculado dividindo a diferença entre o valor máximo e mínimo da variável(atributo) pelo número de intervalos(num_intervals). Isso garante que os intervalos sejam criados de forma uniforme.
 	step = (max_value - min_value) / num_intervals
-	
 	intervals = []
 	for i in range(num_intervals): # itera num_intervals vezes para criar os intervalos, armazenando-os em uma lista de tuplas (start, end).
 		start = round(min_value + i * step, 3)

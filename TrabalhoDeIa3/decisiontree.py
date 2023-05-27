@@ -13,10 +13,8 @@ class DecisionTree:
 		probability_list = data[3]
 		self.entropy_of_output_variable = self.entropy(probability_list)
 
-
 	def learn_decision_tree(self):
 		self.tree = self.learnDecisionTree(self.examples, self.attributes.copy(), None)
-
 
 	def learnDecisionTree(self, examples: List[dict], attributes: Dict[str,set], parent_examples: List[dict]):
 		if not examples: return self.most_common_output_value(parent_examples)
@@ -42,7 +40,6 @@ class DecisionTree:
 			except: output[value] = 1
 		output_value = max(output.items(), key=lambda x: x[1])[0] # pega a chave(output value) mais frequente segundo o valor(contagem) de cada par
 		return Tree(output_value)
-	
 
 	def all_have_same_classification(self, examples: List[dict]):
 		class_key = list(examples[0].keys())[-1]  # Obter a chave da classificação (última chave)
@@ -57,7 +54,6 @@ class DecisionTree:
 	def importance(self, attribute, examples):
 		attribute_name = attribute[0] # pegando a chave(nome do atributo)
 		class_key = list(examples[0].keys())[-1]  # Obter a chave da classificação (última chave)
-		
 		attribute_values = dict() # se o atributo fosse Patrons do dataset restaurant teriamos um dicionário assim: attribute_values = {'None': {'Yes':0, 'No':2}, 'Full': {'Yes':2, 'No':4}, 'Some': {'Yes':4, 'No':0}}
 		for attribute_value in attribute[1]:
 			attribute_values[attribute_value] = dict()
@@ -73,22 +69,17 @@ class DecisionTree:
 	def information_gain(self, attribute, attribute_values):
 		remainder = 0.0
 		for attribute_value in attribute[1]:
-																																		  # (output value, value frequency)
+			# (output value, value frequency)
 			output_values_list = list(attribute_values[attribute_value].items()) # .items() retorna um set de tuplos(chave,valor), daí output_values_list é uma lista de tuplos - algo como isso por exemplo: [('Yes', 0), ('No', 2)]
-			
 			if not output_values_list: continue
-			
 			total_examples = sum([value_frequency := pair[1] for pair in output_values_list]) # total de exemplos que tem esse attribute_value 
 			probability_list = list() # lista com as probabilidades de cada output_value(Ex: 'Yes', 'No') para esse attribute_value(Ex: 'Some')
-			
 			for pair in output_values_list:
 				probability_list.append(pair[1]/total_examples)
 
 			remainder+=(total_examples)/(self.total_examples_in_dataset)*self.entropy(probability_list)
-		
 		gain = self.entropy_of_output_variable - remainder # quanto menor for o remainder maior é o ganho
 		return gain
-	
 
 	def entropy(self, probability_list):
 		entropy = 0.0
