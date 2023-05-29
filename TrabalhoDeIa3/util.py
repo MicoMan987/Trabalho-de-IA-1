@@ -63,9 +63,6 @@ def read_input():
 	for output_value in output_values_frequency:
 		frequency = output_values_frequency[output_value]
 		probability_list.append(frequency/total_examples_in_dataset)
-	print(probability_list)
-	#examples - list()
-	#attributes - dict()
 	return (examples, attributes, total_examples_in_dataset, probability_list)
 
 

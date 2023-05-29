@@ -6,7 +6,7 @@ from tree import Tree
 class DecisionTree:
 	def __init__(self, data: tuple):
 		self.tree = None
-		self.classification = False
+		self.classification = None
 		self.examples = data[0]
 		self.attributes = data[1]
 		self.total_examples_in_dataset = data[2]
@@ -105,9 +105,9 @@ class DecisionTree:
 		if re.fullmatch(r'^[0-9]+\.[0-9]+$', branch_name) or re.fullmatch(r'^[0-9]+$', branch_name):
 			for branch in tree.branches:
 				interval = branch.split(',')
-				if float(interval[0]) <= float(branch_name) <= float(interval[1]): 
+				if float(interval[0]) <= float(branch_name) <= float(interval[1]):
 					branch_name = branch
-					break	
+					break
 		subtree = tree.branches[branch_name]
 		if subtree.isLeaf():
 			return subtree.name
@@ -117,7 +117,6 @@ class DecisionTree:
 	def printTree(self):
 		self.print_tree(self.tree, self.examples, 0)
 
-	
 	def print_tree(self, tree, examples, tab):
 		tabs = tab*'\t'
 		print(f'{tabs}<{tree.name}>')
@@ -138,6 +137,6 @@ class DecisionTree:
 		counter = 0
 		class_key = list(examples[0].keys())[-1]  # Obter a chave da classificação (última chave)
 		for example in examples:
-			if example[class_key] == classification and example[attribute] == value: 
-				counter+=1 
+			if example[class_key] == classification and example[attribute] == value:
+				counter+=1
 		return counter
